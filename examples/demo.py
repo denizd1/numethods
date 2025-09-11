@@ -1,5 +1,18 @@
 from numethods import *
 
+A = Matrix([[2, -1], [1, 2], [1, 1]])
+b = Vector([1, 2, 3])
+
+# Factorization
+qr = QRHouseholder(A)
+Q, R = qr.Q, qr.R
+print("Q =", Q)
+print("R =", R)
+
+# Solve Ax = b (least squares, since A is tall)
+x_ls = LeastSquaresSolver(A, b).solve()
+print("Least squares solution:", x_ls)
+
 def demo_linear_solvers():
     A = Matrix([[4, -1, 0],
                 [-1, 4, -1],
