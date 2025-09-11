@@ -5,7 +5,7 @@ from .exceptions import SingularMatrixError
 
 
 class QRGramSchmidt:
-    """Classical Gram–Schmidt orthogonalization."""
+    """Classical Gram-Schmidt orthogonalization."""
 
     def __init__(self, A: Matrix):
         self.m, self.n = A.shape()
@@ -34,7 +34,7 @@ class QRGramSchmidt:
 
 
 class QRModifiedGramSchmidt:
-    """Modified Gram–Schmidt orthogonalization."""
+    """Modified Gram-Schmidt orthogonalization."""
 
     def __init__(self, A: Matrix):
         self.m, self.n = A.shape()
@@ -123,6 +123,6 @@ class LeastSquaresSolver:
         ]
         # Take only first n entries
         Qtb = Vector(Qtb_full[: self.A.n])
-        # Extract leading n×n block of R
+        # Extract leading nxn block of R
         Rtop = Matrix([R.data[i][: self.A.n] for i in range(self.A.n)])
         return backward_substitution(Rtop, Qtb)
