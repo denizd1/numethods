@@ -3,6 +3,14 @@
 A lightweight, from-scratch, object-oriented Python package implementing classic numerical methods.  
 **No NumPy / SciPy solvers used**, algorithms are implemented transparently for learning and research.
 
+## Why this might be useful
+- Great for teaching/learning numerical methods step by step.
+- Good reference for people writing their own solvers in C/Fortran/Julia.
+- Lightweight, no dependencies.
+- Consistent object-oriented API (.solve(), .integrate() etc).
+
+---
+
 ## Features
 
 ### Linear system solvers
