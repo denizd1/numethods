@@ -42,7 +42,7 @@ A small, from-scratch, object-oriented Python package implementing classic numer
 
 ### Singular Value Decomposition (NEW)
 
-- **SVD** via eigen-decomposition of \(A^\top A\): `SVD`
+- **SVD** via eigen-decomposition of \(A^T A\): `SVD`
 
 ### Matrix & Vector utilities
 
