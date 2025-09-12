@@ -33,7 +33,7 @@ A small, from-scratch, object-oriented Python package implementing classic numer
 - **QR-based linear solver** (square systems): `QRSolver`
 - **Least Squares** for overdetermined systems (via QR): `LeastSquaresSolver`
 
-### Eigenvalue methods (NEW)
+### Eigenvalue methods
 
 - **Power Iteration** (dominant eigenvalue/vector): `PowerIteration`
 - **Inverse Power Iteration** (optionally shifted): `InversePowerIteration`
