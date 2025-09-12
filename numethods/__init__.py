@@ -9,6 +9,7 @@ from .orthogonal import (
 from .solvers import LUDecomposition, GaussJordan, Jacobi, GaussSeidel, Cholesky
 from .roots import Bisection, FixedPoint, Secant, NewtonRoot
 from .interpolation import NewtonInterpolation, LagrangeInterpolation
+from .quadrature import Trapezoidal, Simpson, GaussLegendre
 from .eigen import (
     PowerIteration,
     InversePowerIteration,
@@ -22,7 +23,7 @@ from .ode import (
     RK2,
     RK4,
     BackwardEuler,
-    Trapezoidal,
+    ODETrapezoidal,
     AdamsBashforth,
     AdamsMoulton,
     PredictorCorrector,

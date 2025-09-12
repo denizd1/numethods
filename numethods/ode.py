@@ -81,7 +81,7 @@ class BackwardEuler(ODESolver):
         return (self.f(t, y + eps) - self.f(t, y - eps)) / (2 * eps)
 
 
-class Trapezoidal(ODESolver):
+class ODETrapezoidal(ODESolver):
     def step(self):
         y_new = self.y  # initial guess
         for _ in range(20):
