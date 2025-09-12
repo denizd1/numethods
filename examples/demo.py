@@ -75,6 +75,7 @@ def demo_differentiation():
     x0 = 2.0
 
     print("Forward  :", ForwardDiff(f, x0))
+    print("Backward :", BackwardDiff(f, x0))
     print("Central  :", CentralDiff(f, x0))
     print("4th order:", CentralDiff4th(f, x0))
     print("Richardson:", RichardsonExtrap(f, x0))
