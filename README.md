@@ -40,9 +40,24 @@ A small, from-scratch, object-oriented Python package implementing classic numer
 - **Rayleigh Quotient Iteration**: `RayleighQuotientIteration`
 - **QR eigenvalue iteration** (unshifted, educational): `QREigenvalues`
 
-### Singular Value Decomposition (NEW)
+### Singular Value Decomposition
 
 - **SVD** via eigen-decomposition of \(A^T A\): `SVD`
+
+### ODE solvers
+
+**Initial value problem solvers** for \( y'(t) = f(t,y), \; y(t_0)=y_0 \)
+
+- **Euler's method** (explicit, first order): `Euler`
+- **Heun's method** / Improved Euler (2nd order): `Heun`
+- **Runge-Kutta 2** (midpoint, 2nd order): `RK2`
+- **Runge-Kutta 4** (classic, 4th order): `RK4`
+- **Backward Euler** (implicit, requires Newton iteration): `BackwardEuler`
+- **Trapezoidal rule** (implicit, 2nd order): `Trapezoidal`
+- **Adams-Bashforth** (multistep explicit): `AdamsBashforth`
+- **Adams-Moulton** (multistep implicit): `AdamsMoulton`
+- **Predictor-Corrector** (AB predictor + AM corrector): `PredictorCorrector`
+- **Adaptive Runge–Kutta (RK45)** (Fehlberg/Dormand–Prince, step control): `RK45`
 
 ### Matrix & Vector utilities
 
