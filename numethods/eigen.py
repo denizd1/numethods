@@ -2,6 +2,7 @@ from __future__ import annotations
 from .linalg import Matrix, Vector
 from .orthogonal import QRHouseholder
 from .exceptions import NonSquareMatrixError, ConvergenceError
+from .linalg import Vector as Vect
 import math
 
 
@@ -188,7 +189,7 @@ class SVD:
             uj = (1.0 / nrm) * uj if nrm > 0 else uj
             Ucols.append(uj.data)
         U = Matrix([[Ucols[j][i] for j in range(len(Ucols))] for i in range(self.A.m)])
-        from .linalg import Vector as Vect
+        
 
         Sigma = Vect(sing)
         return U, Sigma, V
