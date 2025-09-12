@@ -1,6 +1,6 @@
 # numethods
 
-A small, from-scratch, object-oriented Python package implementing classic numerical methods.  
+A lightweight, from-scratch, object-oriented Python package implementing classic numerical methods.  
 **No NumPy / SciPy solvers used**, algorithms are implemented transparently for learning and research.
 
 ## Features
