@@ -32,6 +32,12 @@ from numethods import (
     AdamsMoulton,
     PredictorCorrector,
     RK45,
+    ForwardDiff,
+    BackwardDiff,
+    CentralDiff,
+    CentralDiff4th,
+    SecondDerivative,
+    RichardsonExtrap,
 )
 
 
@@ -62,6 +68,17 @@ def demo_ode():
 
     print("=" * 60)
     print("All solvers finished.")
+
+
+def demo_differentiation():
+    f = lambda x: x**3  # f'(x) = 3x^2, f''(x) = 6x
+    x0 = 2.0
+
+    print("Forward  :", ForwardDiff(f, x0))
+    print("Central  :", CentralDiff(f, x0))
+    print("4th order:", CentralDiff4th(f, x0))
+    print("Richardson:", RichardsonExtrap(f, x0))
+    print("Second derivative:", SecondDerivative(f, x0))
 
 
 def demo_qr():
@@ -158,3 +175,4 @@ if __name__ == "__main__":
     demo_interpolation()
     demo_quadrature()
     demo_ode()
+    demo_differentiation()
