@@ -29,5 +29,12 @@ from .ode import (
     PredictorCorrector,
     RK45,
 )
-
+from .differentiation import (
+    ForwardDiff,
+    BackwardDiff,
+    CentralDiff,
+    CentralDiff4th,
+    SecondDerivative,
+    RichardsonExtrap,
+)
 from .exceptions import *
