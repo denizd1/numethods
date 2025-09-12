@@ -74,7 +74,7 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - **Simpson's rule** (composite, even n): `Simpson`
 - **Gauss-Legendre quadrature** (2 and 3 point): `GaussLegendre`
 
-### Numerical Differentiation (NEW)
+### Numerical Differentiation
 
 - **Forward difference**: `ForwardDiff`
 - **Backward difference**: `BackwardDiff`
