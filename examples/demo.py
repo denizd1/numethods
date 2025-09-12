@@ -19,24 +19,26 @@ from numethods import (
     FixedPoint,
     NewtonInterpolation,
     LagrangeInterpolation,
+    Trapezoidal,
+    Simpson,
+    GaussLegendre,
     Euler,
     Heun,
     RK2,
     RK4,
     BackwardEuler,
-    Trapezoidal,
+    ODETrapezoidal,
     AdamsBashforth,
     AdamsMoulton,
     PredictorCorrector,
     RK45,
 )
 
-# Test problem: y' = -2y + t, y(0) = 1
-f = lambda t, y: -2 * y + t
-t0, y0, h, t_end = 0.0, 1.0, 0.1, 2.0
-
 
 def run_solver(Solver, name, **kwargs):
+    # Test problem: y' = -2y + t, y(0) = 1
+    f = lambda t, y: -2 * y + t
+    t0, y0, h, t_end = 0.0, 1.0, 0.1, 2.0
     solver = Solver(f, t0, y0, h, **kwargs)
     ts, ys = solver.solve(t_end)
     print(f"{name:20s} final y({t_end}) ≈ {ys[-1]:.6f}")
@@ -52,7 +54,7 @@ def demo_ode():
     run_solver(RK2, "RK2 (Midpoint)")
     run_solver(RK4, "RK4 (Classic)")
     run_solver(BackwardEuler, "Backward Euler")
-    run_solver(Trapezoidal, "Trapezoidal Rule")
+    run_solver(ODETrapezoidal, "Trapezoidal Rule")
     run_solver(AdamsBashforth, "Adams-Bashforth (2-step)", order=2)
     run_solver(AdamsMoulton, "Adams-Moulton (2-step)")
     run_solver(PredictorCorrector, "Predictor-Corrector")
@@ -137,10 +139,22 @@ def demo_interpolation():
     print("Lagrange interpolation at", t, "=", lagr.evaluate(t))
 
 
+def demo_quadrature():
+    f = lambda x: x**2
+    I1 = Trapezoidal(f, 0, 1, n=100).integrate()
+    I2 = Simpson(f, 0, 1, n=100).integrate()
+    I3 = GaussLegendre(f, 0, 1, n=2).integrate()
+
+    print("Trapezoidal integral of x^2 over [0,1]:", I1)
+    print("Simpson integral of x^2 over [0,1]:", I2)
+    print("Gauss-Legendre integral of x^2 over [0,1]:", I3)
+
+
 if __name__ == "__main__":
     demo_qr()
     demo_eigen()
     demo_linear_solvers()
     demo_roots()
     demo_interpolation()
+    demo_quadrature()
     demo_ode()
