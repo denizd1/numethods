@@ -16,5 +16,17 @@ from .eigen import (
     QREigenvalues,
     SVD,
 )
+from .ode import (
+    Euler,
+    Heun,
+    RK2,
+    RK4,
+    BackwardEuler,
+    Trapezoidal,
+    AdamsBashforth,
+    AdamsMoulton,
+    PredictorCorrector,
+    RK45,
+)
 
 from .exceptions import *
