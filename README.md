@@ -53,11 +53,17 @@ A small, from-scratch, object-oriented Python package implementing classic numer
 - **Runge-Kutta 2** (midpoint, 2nd order): `RK2`
 - **Runge-Kutta 4** (classic, 4th order): `RK4`
 - **Backward Euler** (implicit, requires Newton iteration): `BackwardEuler`
-- **Trapezoidal rule** (implicit, 2nd order): `Trapezoidal`
+- **Trapezoidal rule** (implicit, 2nd order): `ODETrapezoidal`
 - **Adams-Bashforth** (multistep explicit): `AdamsBashforth`
 - **Adams-Moulton** (multistep implicit): `AdamsMoulton`
 - **Predictor-Corrector** (AB predictor + AM corrector): `PredictorCorrector`
 - **Adaptive Runge–Kutta (RK45)** (Fehlberg/Dormand–Prince, step control): `RK45`
+
+### Quadrature (Numerical Integration)
+
+- **Trapezoidal rule** (composite): `Trapezoidal`
+- **Simpson's rule** (composite, even n): `Simpson`
+- **Gauss-Legendre quadrature** (2 and 3 point): `GaussLegendre`
 
 ### Matrix & Vector utilities
 
