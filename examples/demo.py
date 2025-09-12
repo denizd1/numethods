@@ -1,4 +1,65 @@
-from numethods import *
+from numethods import Matrix, Vector
+from numethods import (
+    QRHouseholder,
+    QRModifiedGramSchmidt,
+    LeastSquaresSolver,
+    PowerIteration,
+    InversePowerIteration,
+    RayleighQuotientIteration,
+    QREigenvalues,
+    SVD,
+    LUDecomposition,
+    GaussJordan,
+    Cholesky,
+    Jacobi,
+    GaussSeidel,
+    Bisection,
+    Secant,
+    NewtonRoot,
+    FixedPoint,
+    NewtonInterpolation,
+    LagrangeInterpolation,
+    Euler,
+    Heun,
+    RK2,
+    RK4,
+    BackwardEuler,
+    Trapezoidal,
+    AdamsBashforth,
+    AdamsMoulton,
+    PredictorCorrector,
+    RK45,
+)
+
+# Test problem: y' = -2y + t, y(0) = 1
+f = lambda t, y: -2 * y + t
+t0, y0, h, t_end = 0.0, 1.0, 0.1, 2.0
+
+
+def run_solver(Solver, name, **kwargs):
+    solver = Solver(f, t0, y0, h, **kwargs)
+    ts, ys = solver.solve(t_end)
+    print(f"{name:20s} final y({t_end}) ≈ {ys[-1]:.6f}")
+    return ts, ys
+
+
+def demo_ode():
+    print("Solving y' = -2y + t,  y(0)=1,  over [0, 2]")
+    print("=" * 60)
+
+    run_solver(Euler, "Euler")
+    run_solver(Heun, "Heun (Improved Euler)")
+    run_solver(RK2, "RK2 (Midpoint)")
+    run_solver(RK4, "RK4 (Classic)")
+    run_solver(BackwardEuler, "Backward Euler")
+    run_solver(Trapezoidal, "Trapezoidal Rule")
+    run_solver(AdamsBashforth, "Adams-Bashforth (2-step)", order=2)
+    run_solver(AdamsMoulton, "Adams-Moulton (2-step)")
+    run_solver(PredictorCorrector, "Predictor-Corrector")
+    run_solver(RK45, "RK45 (adaptive)", tol=1e-6)
+
+    print("=" * 60)
+    print("All solvers finished.")
 
 
 def demo_qr():
@@ -82,3 +143,4 @@ if __name__ == "__main__":
     demo_linear_solvers()
     demo_roots()
     demo_interpolation()
+    demo_ode()
