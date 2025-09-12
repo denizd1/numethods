@@ -4,6 +4,7 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 **No NumPy / SciPy solvers used**, algorithms are implemented transparently for learning and research.
 
 ## Why this might be useful
+
 - Great for teaching/learning numerical methods step by step.
 - Good reference for people writing their own solvers in C/Fortran/Julia.
 - Lightweight, no dependencies.
@@ -41,7 +42,7 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - **QR-based linear solver** (square systems): `QRSolver`
 - **Least Squares** for overdetermined systems (via QR): `LeastSquaresSolver`
 
-### Eigenvalue methods
+### Eigenvalue methods (NEW)
 
 - **Power Iteration** (dominant eigenvalue/vector): `PowerIteration`
 - **Inverse Power Iteration** (optionally shifted): `InversePowerIteration`
@@ -72,6 +73,15 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - **Trapezoidal rule** (composite): `Trapezoidal`
 - **Simpson's rule** (composite, even n): `Simpson`
 - **Gauss-Legendre quadrature** (2 and 3 point): `GaussLegendre`
+
+### Numerical Differentiation (NEW)
+
+- **Forward difference**: `ForwardDiff`
+- **Backward difference**: `BackwardDiff`
+- **Central difference (2nd order)**: `CentralDiff`
+- **Central difference (4th order)**: `CentralDiff4th`
+- **Second derivative**: `SecondDerivative`
+- **Richardson extrapolation**: `RichardsonExtrap`
 
 ### Matrix & Vector utilities
 
