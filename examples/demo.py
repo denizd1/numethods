@@ -120,13 +120,15 @@ def demo_qr():
 
 def demo_eigen():
     A = Matrix([[4, 1, 1], [1, 3, 0], [1, 0, 2]])
-    lam, v = PowerIteration(A, tol=1e-12).solve()
+    lam, v = PowerIteration(A, tol=1e-12, verbose=True).solve()
     print("Power iteration:", lam, v)
 
-    lam_min, v_min = InversePowerIteration(A, shift=0.0, tol=1e-12).solve()
+    lam_min, v_min = InversePowerIteration(
+        A, shift=0.0, tol=1e-12, verbose=True
+    ).solve()
     print("Inverse power:", lam_min, v_min)
 
-    lam_rqi, v_rqi = RayleighQuotientIteration(A, tol=1e-12).solve()
+    lam_rqi, v_rqi = RayleighQuotientIteration(A, tol=1e-12, verbose=True).solve()
     print("RQI:", lam_rqi, v_rqi)
 
     Aq = QREigenvalues(A, tol=1e-12).solve()
@@ -235,8 +237,11 @@ def demo_fitting():
         mode="line",
     )
     poly.summary()
+    poly.trace()
     lin.summary()
+    lin.trace()
     expfit.summary()
+    expfit.trace()
     nonlin.summary()
     nonlin.trace()
 
