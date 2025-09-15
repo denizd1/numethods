@@ -86,7 +86,7 @@ class ExpFit:
 
 
 class NonlinearFit:
-    """Nonlinear least squares fitting using adaptive Levenberg–Marquardt."""
+    """Nonlinear least squares fitting using adaptive Levenberg-Marquardt."""
 
     def __init__(
         self,
