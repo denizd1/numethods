@@ -5,7 +5,7 @@ from .exceptions import SingularMatrixError
 
 
 class QRGramSchmidt:
-    """Classical Gram-Schmidt orthogonalization."""
+    """Classical Gram–Schmidt orthogonalization."""
 
     def __init__(self, A: Matrix):
         self.m, self.n = A.shape()
@@ -34,7 +34,7 @@ class QRGramSchmidt:
 
 
 class QRModifiedGramSchmidt:
-    """Modified Gram-Schmidt orthogonalization."""
+    """Modified Gram–Schmidt orthogonalization."""
 
     def __init__(self, A: Matrix):
         self.m, self.n = A.shape()
@@ -79,7 +79,7 @@ class QRHouseholder:
             sign = 1.0 if x[0] >= 0 else -1.0
             u1 = x[0] + sign * normx
             v = [xi / u1 if i > 0 else 1.0 for i, xi in enumerate(x)]
-            normv = sum(vi * vi for vi in v) ** 0.5
+            normv = Vector(v).norm2()
             v = [vi / normv for vi in v]
             for j in range(k, n):
                 s = sum(v[i] * self.R.data[k + i][j] for i in range(len(v)))
@@ -89,7 +89,7 @@ class QRHouseholder:
                 s = sum(v[i] * self.Q.data[j][k + i] for i in range(len(v)))
                 for i in range(len(v)):
                     self.Q.data[j][k + i] -= 2 * s * v[i]
-        self.Q = self.Q.transpose()
+        # self.Q = self.Q.transpose()
 
 
 class QRSolver:
@@ -123,6 +123,6 @@ class LeastSquaresSolver:
         ]
         # Take only first n entries
         Qtb = Vector(Qtb_full[: self.A.n])
-        # Extract leading nxn block of R
+        # Extract leading n×n block of R
         Rtop = Matrix([R.data[i][: self.A.n] for i in range(self.A.n)])
         return backward_substitution(Rtop, Qtb)

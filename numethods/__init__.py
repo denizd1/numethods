@@ -7,7 +7,7 @@ from .orthogonal import (
     LeastSquaresSolver,
 )
 from .solvers import LUDecomposition, GaussJordan, Jacobi, GaussSeidel, Cholesky
-from .roots import Bisection, FixedPoint, Secant, NewtonRoot
+from .roots import Bisection, FixedPoint, Secant, NewtonRoot, print_trace
 from .interpolation import NewtonInterpolation, LagrangeInterpolation
 from .quadrature import Trapezoidal, Simpson, GaussLegendre
 from .eigen import (
@@ -37,4 +37,6 @@ from .differentiation import (
     SecondDerivative,
     RichardsonExtrap,
 )
+from .fitting import PolyFit, LinearFit, ExpFit, NonlinearFit, plot_fit, plot_residuals
+
 from .exceptions import *

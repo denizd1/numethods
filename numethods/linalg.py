@@ -155,6 +155,7 @@ class Matrix:
 
 
 def forward_substitution(L: Matrix, b: Vector) -> Vector:
+    """Solve Lx = b for x using forward substitution"""
     if not L.is_square():
         raise NonSquareMatrixError("L must be square")
     n = L.n
@@ -168,6 +169,7 @@ def forward_substitution(L: Matrix, b: Vector) -> Vector:
 
 
 def backward_substitution(U: Matrix, b: Vector) -> Vector:
+    """Solve Ux = b for x using backward substitution"""
     if not U.is_square():
         raise NonSquareMatrixError("U must be square")
     n = U.n
