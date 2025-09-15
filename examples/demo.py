@@ -1,27 +1,27 @@
 from numethods import Matrix, Vector
-from numethods import (
+from numethods.orthogonal import (
     QRHouseholder,
     QRModifiedGramSchmidt,
     LeastSquaresSolver,
+)
+from numethods.solvers import (
+    LUDecomposition,
+    GaussJordan,
+    Jacobi,
+    GaussSeidel,
+    Cholesky,
+)
+from numethods.roots import Bisection, FixedPoint, Secant, NewtonRoot, print_trace
+from numethods.interpolation import NewtonInterpolation, LagrangeInterpolation
+from numethods.quadrature import Trapezoidal, Simpson, GaussLegendre
+from numethods.eigen import (
     PowerIteration,
     InversePowerIteration,
     RayleighQuotientIteration,
     QREigenvalues,
     SVD,
-    LUDecomposition,
-    GaussJordan,
-    Cholesky,
-    Jacobi,
-    GaussSeidel,
-    Bisection,
-    Secant,
-    NewtonRoot,
-    FixedPoint,
-    NewtonInterpolation,
-    LagrangeInterpolation,
-    Trapezoidal,
-    Simpson,
-    GaussLegendre,
+)
+from numethods.ode import (
     Euler,
     Heun,
     RK2,
@@ -32,6 +32,8 @@ from numethods import (
     AdamsMoulton,
     PredictorCorrector,
     RK45,
+)
+from numethods.differentiation import (
     ForwardDiff,
     BackwardDiff,
     CentralDiff,
@@ -39,6 +41,15 @@ from numethods import (
     SecondDerivative,
     RichardsonExtrap,
 )
+from numethods.fitting import (
+    LinearFit,
+    NonlinearFit,
+    PolyFit,
+    ExpFit,
+    plot_fit,
+    plot_residuals,
+)
+import math
 
 
 def run_solver(Solver, name, **kwargs):
@@ -100,6 +111,7 @@ def demo_qr():
     print("Q^T Q =", Q.T @ Q)
     print("Qm^T Qm =", Qm.T @ Qm)
     print("A=Qm Rm =", Qm @ Rm)
+    print("A=Q R =", Q @ R)
 
     # Solve Ax = b (least squares, since A is tall)
     x_ls = LeastSquaresSolver(A, b).solve()
@@ -137,14 +149,29 @@ def demo_linear_solvers():
 
 
 def demo_roots():
-    f = lambda x: x**3 - x - 2
-    df = lambda x: 3 * x**2 - 1
-    print("Bisection:", Bisection(f, 1, 2).solve())
-    print("Secant:", Secant(f, 1.0, 2.0).solve())
-    print("Newton root:", NewtonRoot(f, df, 1.5).solve())
-    # A simple contraction for demonstration; not general-purpose
-    g = lambda x: (x + 2 / x**2) / 2
-    print("Fixed point (demo):", FixedPoint(g, 1.5).solve())
+    f = lambda x: x**2 - 2
+    df = lambda x: 2 * x
+
+    # Newton
+    steps = NewtonRoot(f, df, x0=1.0).trace()
+    print("Newton Method Trace (x^2 - 2):")
+    print_trace(steps)
+
+    # Secant
+    steps = Secant(f, 0, 2).trace()
+    print("\nSecant Method Trace (x^2 - 2):")
+    print_trace(steps)
+
+    # Bisection
+    steps = Bisection(f, 0, 2).trace()
+    print("\nBisection Method Trace (x^2 - 2):")
+    print_trace(steps)
+
+    # Fixed-point: solve
+    g = lambda x: 0.5 * (x + 2 / x)
+    steps = FixedPoint(g, 1.0).trace()
+    print("\nFixed-Point Iteration Trace (x^2 - 2):")
+    print_trace(steps)
 
 
 def demo_interpolation():
@@ -168,6 +195,56 @@ def demo_quadrature():
     print("Gauss-Legendre integral of x^2 over [0,1]:", I3)
 
 
+def demo_fitting():
+    x = [0, 1, 2, 3, 4]
+    y = [1, 2.7, 7.4, 20.1, 54.6]
+
+    # Polynomial fit (degree 2)
+    poly = PolyFit(x, y, degree=2)
+
+    # Exponential fit
+    expfit = ExpFit(x, y)
+
+    # Linear fit with a chosen basis (example: [1, x])
+    basis = [lambda t: 1.0, lambda t: t]
+    lin = LinearFit(x, y, basis)
+
+    # Nonlinear exponential fit (Gauss–Newton / LM)
+    def model(x, params):
+        a, b = params
+        return a * math.exp(b * x)
+
+    nonlin = NonlinearFit(
+        model, x, y, init_params=[1.0, 0.8], lam=1e-3, max_iter=50, verbose=True
+    )
+
+    # Plot all fits
+    plot_fit(
+        x,
+        y,
+        [poly, lin, expfit, nonlin],
+        labels=["Polynomial", "Linear (1,x)", "Exponential", "Nonlinear"],
+    )
+
+    # Line plot (current style)
+    plot_residuals(
+        x,
+        y,
+        [poly, lin, expfit, nonlin],
+        labels=["Polynomial", "Linear (1,x)", "Exponential", "Nonlinear"],
+        mode="line",
+    )
+
+    # Bar chart of absolute residuals
+    # plot_residuals(
+    #     x,
+    #     y,
+    #     [poly, expfit, nonlin],
+    #     labels=["Polynomial", "Exponential", "Nonlinear"],
+    #     mode="bar",
+    # )
+
+
 if __name__ == "__main__":
     demo_qr()
     demo_eigen()
@@ -177,3 +254,4 @@ if __name__ == "__main__":
     demo_quadrature()
     demo_ode()
     demo_differentiation()
+    demo_fitting()
