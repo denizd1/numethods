@@ -83,6 +83,13 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - **Second derivative**: `SecondDerivative`
 - **Richardson extrapolation**: `RichardsonExtrap`
 
+### Curve Fitting
+
+- **Polynomial least squares fit**: `PolyFit`
+- **Linear regression with custom basis functions**: `LinearFit`
+- **Exponential fit** (via log transform): `ExpFit`
+- **Nonlinear least squares (Gauss–Newton / Levenberg–Marquardt)**: `NonlinearFit`
+
 ### Matrix & Vector utilities
 
 - Minimal `Matrix` / `Vector` classes
@@ -113,3 +120,6 @@ python /numethods/examples/demo.py
 - All algorithms are implemented without relying on external linear algebra solvers.
 - Uses plain Python floats and list-of-lists for matrices/vectors.
 - Tolerances use a relative criterion `|Δ| ≤ tol (1 + |value|)`.
+- ODE implicit solvers use Newton’s method with finite-difference Jacobian approximation.
+- Curve fitting supports polynomial, linear basis, exponential, and general nonlinear regression.
+- Visualization requires `matplotlib`.
