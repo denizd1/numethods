@@ -23,13 +23,30 @@ class PolyFit:
     def _fit(self):
         n = len(self.x)
         m = self.degree + 1
-        # Vandermonde matrix
         A = Matrix([[self.x[i] ** j for j in range(m)] for i in range(n)])
         b = Vector(self.y)
         return LeastSquaresSolver(A, b).solve()
 
     def evaluate(self, t: float) -> float:
         return sum(self.coeffs[j] * (t**j) for j in range(len(self.coeffs)))
+
+    def summary(self):
+        print("Polynomial Fit Coefficients")
+        print("degree =", self.degree)
+        print(" coeff |   value")
+        print("-------------------")
+        for j, c in enumerate(self.coeffs):
+            print(f"  c{j:<3}| {c: .6f}")
+        print()
+
+    def trace(self):
+        print("Polynomial Fit Trace (Vandermonde system)")
+        print(" x | y | " + " | ".join([f"x^{j}" for j in range(self.degree + 1)]))
+        print("-" * 40)
+        for xi, yi in zip(self.x, self.y):
+            row = " | ".join([f"{xi**j: .4f}" for j in range(self.degree + 1)])
+            print(f"{xi: .4f} | {yi: .4f} | {row}")
+        print()
 
 
 class LinearFit:
@@ -58,6 +75,23 @@ class LinearFit:
     def evaluate(self, t: float) -> float:
         return sum(c * phi(t) for c, phi in zip(self.coeffs, self.basis))
 
+    def summary(self):
+        print("Linear Fit Coefficients")
+        print(" basis |   value")
+        print("-------------------")
+        for j, c in enumerate(self.coeffs):
+            print(f"  φ{j:<3}| {c: .6f}")
+        print()
+
+    def trace(self):
+        print("Linear Fit Trace (design matrix)")
+        print(" x | y | " + " | ".join([f"φ{j}(x)" for j in range(len(self.basis))]))
+        print("-" * 40)
+        for xi, yi in zip(self.x, self.y):
+            row = " | ".join([f"{phi(xi): .4f}" for phi in self.basis])
+            print(f"{xi: .4f} | {yi: .4f} | {row}")
+        print()
+
 
 class ExpFit:
     """Fit y ≈ a * exp(bx) using log transform + linear least squares."""
@@ -84,9 +118,25 @@ class ExpFit:
     def evaluate(self, t: float) -> float:
         return self.a * math.exp(self.b * t)
 
+    def summary(self):
+        print("Exponential Fit Parameters")
+        print(" param |   value")
+        print("-------------------")
+        print(f"   a   | {self.a: .6f}")
+        print(f"   b   | {self.b: .6f}")
+        print()
+
+    def trace(self):
+        print("Exponential Fit Trace (log transform)")
+        print(" x | y | log(y)")
+        print("-------------------")
+        for xi, yi in zip(self.x, self.y):
+            print(f"{xi: .4f} | {yi: .4f} | {math.log(yi): .4f}")
+        print()
+
 
 class NonlinearFit:
-    """Nonlinear least squares fitting using adaptive Levenberg-Marquardt."""
+    """Nonlinear least squares fitting using adaptive Levenberg–Marquardt."""
 
     def __init__(
         self,
@@ -112,7 +162,8 @@ class NonlinearFit:
         self.lam = lam
         self.derivative_method = derivative_method
         self.verbose = verbose
-        self.history = []  # store convergence
+        # history stores tuples: (iter, params, res_norm, λ, step, status)
+        self.history: List[tuple] = []
         self._fit()
 
     def _residuals(self, params):
@@ -129,16 +180,15 @@ class NonlinearFit:
 
         m, n = len(self.x), len(params)
         J = [[0.0] * n for _ in range(m)]
-
         for j in range(n):
             for i, xi in enumerate(self.x):
-                # define f(pj) = model(xi, params with pj in slot j)
+
                 def func(pj):
                     new_params = params[:]
                     new_params[j] = pj
                     return self.model(xi, new_params)
 
-                J[i][j] = diff_method(func, params[j])  # <- correct signature
+                J[i][j] = diff_method(func, params[j])
         return Matrix(J)
 
     def _fit(self):
@@ -152,61 +202,75 @@ class NonlinearFit:
             A = JT @ J
             g = JT @ r
 
-            # add damping λI
             for i in range(len(params)):
                 A.data[i][i] += self.lam
 
             try:
                 delta = LeastSquaresSolver(A, Vector([-gi for gi in g])).solve()
+                new_params = [p + d for p, d in zip(params, delta)]
+                new_r = self._residuals(new_params)
+                res_norm = sum(abs(val) for val in new_r)
+                status = "ok"
             except Exception:
-                if self.verbose:
-                    print(f"[iter {k}] Solver failed, increasing λ")
+                delta = [0.0] * len(params)
+                new_params = params[:]
+                res_norm = float("inf")
+                status = "solver fail"
                 self.lam *= 10
+                self.history.append((k, params[:], res_norm, self.lam, delta, status))
                 continue
 
-            new_params = [p + d for p, d in zip(params, delta)]
-            new_r = self._residuals(new_params)
-            res_norm = sum(abs(val) for val in new_r)
+            # record this iteration
+            self.history.append((k, params[:], res_norm, self.lam, delta, status))
 
-            if self.verbose:
-                print(
-                    f"[iter {k}] params={params}, res_norm={res_norm:.6e}, "
-                    f"λ={self.lam:.1e}, step={delta}"
-                )
-
-            # --- stopping conditions ---
+            # stopping conditions
             if res_norm < self.tol:
-                if self.verbose:
-                    print(f"Converged (residual small) at iter {k}")
                 params = new_params
                 break
             if max(abs(d) for d in delta) < self.tol:
-                if self.verbose:
-                    print(f"Converged (step small) at iter {k}")
                 params = new_params
                 break
             if abs(prev_res_norm - res_norm) < 1e-12:
-                if self.verbose:
-                    print(f"No improvement at iter {k}, stopping")
                 params = new_params
                 break
 
-            # --- accept/reject step ---
-            if res_norm < prev_res_norm:  # improvement
+            if res_norm < prev_res_norm:
                 params = new_params
                 prev_res_norm = res_norm
                 self.lam = max(self.lam / 10, 1e-12)
-            else:  # no improvement
+            else:
                 self.lam *= 10
                 if self.lam > 1e12:
-                    if self.verbose:
-                        print("λ exploded, stopping")
                     break
 
         self.params = params
 
     def evaluate(self, t: float) -> float:
         return self.model(t, self.params)
+
+    def summary(self):
+        print("Nonlinear Fit Final Parameters")
+        for j, p in enumerate(self.params):
+            print(f" param{j} = {p: .6f}")
+        print()
+
+    def trace(self):
+        print("Nonlinear Fit Trace (Levenberg–Marquardt)")
+        header = (
+            " iter | "
+            + " | ".join([f"param{j}" for j in range(len(self.params))])
+            + " | res_norm |    λ    | step_norm | status"
+        )
+        print(header)
+        print("-" * len(header))
+        for k, params, res_norm, lam, delta, status in self.history:
+            row = " | ".join([f"{p: .6f}" for p in params])
+            step_norm = max(abs(d) for d in delta) if delta else 0.0
+            print(
+                f"{k:5d} | {row} | {res_norm: .6e} | {lam: .1e} | {step_norm: .3e} | {status}"
+            )
+        print("Final params:", self.params)
+        print()
 
 
 # ----------------------------
