@@ -234,6 +234,11 @@ def demo_fitting():
         labels=["Polynomial", "Linear (1,x)", "Exponential", "Nonlinear"],
         mode="line",
     )
+    poly.summary()
+    lin.summary()
+    expfit.summary()
+    nonlin.summary()
+    nonlin.trace()
 
     # Bar chart of absolute residuals
     # plot_residuals(
