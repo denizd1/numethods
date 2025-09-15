@@ -88,7 +88,7 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - **Polynomial least squares fit**: `PolyFit`
 - **Linear regression with custom basis functions**: `LinearFit`
 - **Exponential fit** (via log transform): `ExpFit`
-- **Nonlinear least squares (Gauss–Newton / Levenberg–Marquardt)**: `NonlinearFit`
+- **Nonlinear least squares (Gauss-Newton / Levenberg-Marquardt)**: `NonlinearFit`
 
 ### Matrix & Vector utilities
 
