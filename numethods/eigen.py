@@ -3,7 +3,6 @@ from .linalg import Matrix, Vector
 from .orthogonal import QRHouseholder
 from .solvers import LUDecomposition
 from .exceptions import NonSquareMatrixError, ConvergenceError
-from .linalg import Matrix, Vector
 import math
 
 
