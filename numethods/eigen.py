@@ -3,6 +3,7 @@ from .linalg import Matrix, Vector
 from .orthogonal import QRHouseholder
 from .solvers import LUDecomposition
 from .exceptions import NonSquareMatrixError, ConvergenceError
+from .linalg import Matrix, Vector
 import math
 
 
@@ -13,21 +14,17 @@ def solve_linear(M: Matrix, b: Vector) -> Vector:
 
 
 class PowerIteration:
-    def __init__(
-        self, A: Matrix, tol: float = 1e-10, max_iter: int = 5000, verbose: bool = False
-    ):
+    def __init__(self, A: Matrix, tol: float = 1e-10, max_iter: int = 5000):
         if not A.is_square():
             raise NonSquareMatrixError("A must be square")
-        self.A, self.tol, self.max_iter, self.verbose = A, tol, max_iter, verbose
+        self.A, self.tol, self.max_iter = A, tol, max_iter
+        self.history = []
 
     def solve(self, x0: Vector | None = None) -> tuple[float, Vector]:
         n = self.A.n
         x = Vector([1.0] * n) if x0 is None else x0.copy()
         lam_old = 0.0
-
-        if self.verbose:
-            print("Power Iteration Trace")
-            print(f"{'iter':>6} | {'lambda':>12} | {'error':>12}")
+        self.history.clear()
 
         for k in range(self.max_iter):
             y = self.A @ x
@@ -36,44 +33,41 @@ class PowerIteration:
                 raise ConvergenceError("Zero vector encountered")
             x = (1.0 / nrm) * y
             lam = (x.dot(self.A @ x)) / (x.dot(x))
-
             err = abs(lam - lam_old)
-            if self.verbose:
-                print(f"{k:6d} | {lam:12.6e} | {err:12.6e}")
+
+            self.history.append({"iter": k, "lambda": lam, "error": err})
 
             if err <= self.tol * (1.0 + abs(lam)):
                 return lam, x
             lam_old = lam
+
         raise ConvergenceError("Power iteration did not converge")
+
+    def trace(self):
+        if not self.history:
+            print("No iterations stored. Run .solve() first.")
+            return
+        print("Power Iteration Trace")
+        print(f"{'iter':>6} | {'lambda':>12} | {'error':>12}")
+        print("-" * 40)
+        for row in self.history:
+            print(f"{row['iter']:6d} | {row['lambda']:12.6e} | {row['error']:12.6e}")
 
 
 class InversePowerIteration:
     def __init__(
-        self,
-        A: Matrix,
-        shift: float = 0.0,
-        tol: float = 1e-10,
-        max_iter: int = 5000,
-        verbose: bool = False,
+        self, A: Matrix, shift: float = 0.0, tol: float = 1e-10, max_iter: int = 5000
     ):
         if not A.is_square():
             raise NonSquareMatrixError("A must be square")
-        self.A, self.shift, self.tol, self.max_iter, self.verbose = (
-            A,
-            shift,
-            tol,
-            max_iter,
-            verbose,
-        )
+        self.A, self.shift, self.tol, self.max_iter = A, shift, tol, max_iter
+        self.history = []
 
     def solve(self, x0: Vector | None = None) -> tuple[float, Vector]:
         n = self.A.n
         x = Vector([1.0] * n) if x0 is None else x0.copy()
         mu_old = None
-
-        if self.verbose:
-            print("Inverse/Shifted Power Iteration Trace")
-            print(f"{'iter':>6} | {'mu':>12} | {'error':>12}")
+        self.history.clear()
 
         for k in range(self.max_iter):
             M = Matrix(
@@ -91,34 +85,40 @@ class InversePowerIteration:
                 raise ConvergenceError("Zero vector")
             x = (1.0 / nrm) * y
             mu = (x.dot(self.A @ x)) / (x.dot(x))
-
             err = abs(mu - mu_old) if mu_old is not None else float("inf")
-            if self.verbose:
-                print(f"{k:6d} | {mu:12.6e} | {err:12.6e}")
+
+            self.history.append({"iter": k, "mu": mu, "error": err})
 
             if (mu_old is not None) and err <= self.tol * (1.0 + abs(mu)):
                 return mu, x
             mu_old = mu
+
         raise ConvergenceError("Inverse/shifted power iteration did not converge")
+
+    def trace(self):
+        if not self.history:
+            print("No iterations stored. Run .solve() first.")
+            return
+        print("Inverse/Shifted Power Iteration Trace")
+        print(f"{'iter':>6} | {'mu':>12} | {'error':>12}")
+        print("-" * 40)
+        for row in self.history:
+            print(f"{row['iter']:6d} | {row['mu']:12.6e} | {row['error']:12.6e}")
 
 
 class RayleighQuotientIteration:
-    def __init__(
-        self, A: Matrix, tol: float = 1e-12, max_iter: int = 1000, verbose: bool = False
-    ):
+    def __init__(self, A: Matrix, tol: float = 1e-12, max_iter: int = 1000):
         if not A.is_square():
             raise NonSquareMatrixError("A must be square")
-        self.A, self.tol, self.max_iter, self.verbose = A, tol, max_iter, verbose
+        self.A, self.tol, self.max_iter = A, tol, max_iter
+        self.history = []
 
     def solve(self, x0: Vector | None = None) -> tuple[float, Vector]:
         n = self.A.n
         x = Vector([1.0] * n) if x0 is None else x0.copy()
         x = (1.0 / x.norm2()) * x
         mu = (x.dot(self.A @ x)) / (x.dot(x))
-
-        if self.verbose:
-            print("Rayleigh Quotient Iteration Trace")
-            print(f"{'iter':>6} | {'mu':>12} | {'error':>12}")
+        self.history.clear()
 
         for k in range(self.max_iter):
             M = Matrix(
@@ -130,15 +130,25 @@ class RayleighQuotientIteration:
             y = solve_linear(M, x)
             x = (1.0 / y.norm2()) * y
             mu_new = (x.dot(self.A @ x)) / (x.dot(x))
-
             err = abs(mu_new - mu)
-            if self.verbose:
-                print(f"{k:6d} | {mu_new:12.6e} | {err:12.6e}")
+
+            self.history.append({"iter": k, "mu": mu_new, "error": err})
 
             if err <= self.tol * (1.0 + abs(mu_new)):
                 return mu_new, x
             mu = mu_new
-        raise ConvergenceError("RQI did not converge")
+
+        raise ConvergenceError("Rayleigh quotient iteration did not converge")
+
+    def trace(self):
+        if not self.history:
+            print("No iterations stored. Run .solve() first.")
+            return
+        print("Rayleigh Quotient Iteration Trace")
+        print(f"{'iter':>6} | {'mu':>12} | {'error':>12}")
+        print("-" * 40)
+        for row in self.history:
+            print(f"{row['iter']:6d} | {row['mu']:12.6e} | {row['error']:12.6e}")
 
 
 class QREigenvalues:

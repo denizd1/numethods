@@ -1,8 +1,10 @@
 from __future__ import annotations
 from typing import List
 
+
 class NewtonInterpolation:
     """Polynomial interpolation via divided differences."""
+
     def __init__(self, x: List[float], y: List[float]):
         if len(x) != len(y):
             raise ValueError("x and y must have same length")
@@ -15,11 +17,11 @@ class NewtonInterpolation:
         n = len(x)
         coef = y[:]
         for j in range(1, n):
-            for i in range(n-1, j-1, -1):
-                denom = x[i] - x[i-j]
+            for i in range(n - 1, j - 1, -1):
+                denom = x[i] - x[i - j]
                 if abs(denom) < 1e-20:
                     raise ZeroDivisionError("Repeated x values in divided differences")
-                coef[i] = (coef[i] - coef[i-1]) / denom
+                coef[i] = (coef[i] - coef[i - 1]) / denom
         return coef
 
     def evaluate(self, t: float) -> float:
@@ -32,6 +34,7 @@ class NewtonInterpolation:
 
 class LagrangeInterpolation:
     """Lagrange-form polynomial interpolation."""
+
     def __init__(self, x: List[float], y: List[float]):
         if len(x) != len(y):
             raise ValueError("x and y must have same length")
@@ -53,5 +56,5 @@ class LagrangeInterpolation:
                 if abs(denom) < 1e-20:
                     raise ZeroDivisionError("Repeated x values in Lagrange basis")
                 L *= (t - x[j]) / denom
-            total += y[i]*L
+            total += y[i] * L
         return total

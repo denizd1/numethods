@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import Iterable, Tuple, List, Union
 from .exceptions import NonSquareMatrixError, SingularMatrixError
+import math
 
 Number = float  # We'll use float throughout
 
@@ -21,6 +22,9 @@ class Vector:
     def copy(self) -> "Vector":
         return Vector(self.data[:])
 
+    def norm(self) -> Number:
+        return sum(abs(x) for x in self.data)
+
     def norm_inf(self) -> Number:
         return max(abs(x) for x in self.data) if self.data else 0.0
 
@@ -28,12 +32,14 @@ class Vector:
         return sum(x * x for x in self.data) ** 0.5
 
     def __add__(self, other: "Vector") -> "Vector":
-        assert len(self) == len(other)
-        return Vector(a + b for a, b in zip(self.data, other.data))
+        if len(self) != len(other):
+            raise ValueError("Vector dimensions must match for addition")
+        return Vector([a + b for a, b in zip(self.data, other.data)])
 
     def __sub__(self, other: "Vector") -> "Vector":
-        assert len(self) == len(other)
-        return Vector(a - b for a, b in zip(self.data, other.data))
+        if len(self) != len(other):
+            raise ValueError("Vector dimensions must match for subtraction")
+        return Vector([a - b for a, b in zip(self.data, other.data)])
 
     def __mul__(self, scalar: Number) -> "Vector":
         return Vector(scalar * x for x in self.data)
@@ -91,6 +97,95 @@ class Matrix:
 
     def col(self, j: int) -> Vector:
         return Vector(self.data[i][j] for i in range(self.m))
+
+    def norm(self) -> float:
+        """Matrix 1-norm: max column sum."""
+        return max(
+            sum(abs(self.data[i][j]) for i in range(self.m)) for j in range(self.n)
+        )
+
+    def norm_inf(self) -> float:
+        """Matrix infinity norm: max row sum."""
+        return max(sum(abs(v) for v in row) for row in self.data)
+
+    def norm2(self, tol: float = 1e-10, max_iter: int = 5000) -> float:
+        """Spectral norm via power iteration on A^T A."""
+        # lazy import, avoids circular import
+        from .eigen import PowerIteration
+
+        if not self.is_square():
+            raise NonSquareMatrixError("Spectral norm requires square matrix")
+        AtA = self.T @ self
+        lam, _ = PowerIteration(AtA, tol=tol, max_iter=max_iter).solve()
+        return math.sqrt(lam)
+
+    def norm_fro(self) -> Number:
+        return (
+            sum(self.data[i][j] ** 2 for i in range(self.m) for j in range(self.n))
+            ** 0.5
+        )
+
+    def inverse(self) -> "Matrix":
+        # lazy import, avoids circular import
+        from .solvers import LUDecomposition
+
+        """Compute A^{-1} using LU decomposition."""
+        if not self.is_square():
+            raise NonSquareMatrixError("Inverse requires square matrix")
+        n = self.n
+        solver = LUDecomposition(self)
+        cols = []
+        for j in range(n):
+            e = Vector([1.0 if i == j else 0.0 for i in range(n)])
+            x = solver.solve(e)
+            cols.append([x[i] for i in range(n)])
+        return Matrix([[cols[j][i] for j in range(n)] for i in range(n)])
+
+    def condition_number(self, norm: str = "2") -> float:
+        """
+        Compute condition number κ(A) = ||A|| * ||A^{-1}||.
+        norm: "1", "inf", or "2"
+        """
+        if not self.is_square():
+            raise NonSquareMatrixError("Condition number requires square matrix")
+
+        if norm == "1":
+            normA = self.norm()
+            normAinv = self.inverse().norm()
+        elif norm == "inf":
+            normA = self.norm_inf()
+            normAinv = self.inverse().norm_inf()
+        elif norm == "2":
+            normA = self.norm2()
+            normAinv = self.inverse().norm2()
+        else:
+            raise ValueError("norm must be '1', 'inf', or '2'")
+
+        return normA * normAinv
+
+    def __add__(self, other: "Matrix") -> "Matrix":
+        if not isinstance(other, Matrix):
+            raise TypeError("Can only add Matrix with Matrix")
+        if self.m != other.m or self.n != other.n:
+            raise ValueError("Matrix dimensions must match for addition")
+        return Matrix(
+            [
+                [self.data[i][j] + other.data[i][j] for j in range(self.n)]
+                for i in range(self.m)
+            ]
+        )
+
+    def __sub__(self, other: "Matrix") -> "Matrix":
+        if not isinstance(other, Matrix):
+            raise TypeError("Can only subtract Matrix with Matrix")
+        if self.m != other.m or self.n != other.n:
+            raise ValueError("Matrix dimensions must match for subtraction")
+        return Matrix(
+            [
+                [self.data[i][j] - other.data[i][j] for j in range(self.n)]
+                for i in range(self.m)
+            ]
+        )
 
     def transpose(self) -> "Matrix":
         return Matrix([[self.data[i][j] for i in range(self.m)] for j in range(self.n)])
