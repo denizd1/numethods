@@ -32,7 +32,6 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - LU decomposition.
    - Cholesky decomposition.
    - Iterative methods: Jacobi and Gauss–Seidel.
-   - Condition number and stability.
    - Examples with `numethods.solvers`.
 
 3. [Tutorial 3: Orthogonalization and QR Factorization](tutorials/tutorial3_orthogonalization.ipynb)
