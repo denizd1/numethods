@@ -38,10 +38,4 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Trace outputs for iteration history.
    - Examples with `numethods.roots`.
 
-- [Polynomial Regression Demo](./polynomial_regression.ipynb)
-
-- Step-by-step example of polynomial regression.
-- Shows how to fit polynomials of different degrees to data.
-- Visualizes fitted curves against the original data.
-
 ---
