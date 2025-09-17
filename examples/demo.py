@@ -120,19 +120,23 @@ def demo_qr():
 
 def demo_eigen():
     A = Matrix([[4, 1, 1], [1, 3, 0], [1, 0, 2]])
-    lam, v = PowerIteration(A, tol=1e-12, verbose=True).solve()
-    print("Power iteration:", lam, v)
+    print("\n=== Power Iteration ===")
+    solver_pi = PowerIteration(A, tol=1e-12, max_iter=100)
+    lam, x = solver_pi.solve()
+    solver_pi.trace()
+    print(f"Dominant eigenvalue ≈ {lam:.6f}, eigenvector ≈ {x}\n")
 
-    lam_min, v_min = InversePowerIteration(
-        A, shift=0.0, tol=1e-12, verbose=True
-    ).solve()
-    print("Inverse power:", lam_min, v_min)
+    print("\n=== Inverse Power Iteration (shift=0) ===")
+    solver_ip = InversePowerIteration(A, shift=0.0, tol=1e-12, max_iter=100)
+    mu, x = solver_ip.solve()
+    solver_ip.trace()
+    print(f"Smallest eigenvalue ≈ {mu:.6f}, eigenvector ≈ {x}\n")
 
-    lam_rqi, v_rqi = RayleighQuotientIteration(A, tol=1e-12, verbose=True).solve()
-    print("RQI:", lam_rqi, v_rqi)
-
-    Aq = QREigenvalues(A, tol=1e-12).solve()
-    print("QR diag eigs:", [Aq.data[i][i] for i in range(3)])
+    print("\n=== Rayleigh Quotient Iteration ===")
+    solver_rqi = RayleighQuotientIteration(A, tol=1e-12, max_iter=20)
+    mu, x = solver_rqi.solve()
+    solver_rqi.trace()
+    print(f"Eigenvalue ≈ {mu:.6f}, eigenvector ≈ {x}\n")
 
     M = Matrix([[3, 1, 1], [-1, 3, 1], [1, 1, 3], [0, 2, 1]])
     U, S, V = SVD(M).solve()
