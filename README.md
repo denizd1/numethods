@@ -10,7 +10,9 @@ A lightweight, from-scratch, object-oriented Python package implementing classic
 - Lightweight, no dependencies.
 - Consistent object-oriented API (.solve() etc).
 
----
+## Tutorial Series
+
+This package comes with a set of Jupyter notebooks designed as a structured tutorial series in **numerical methods**, both mathematically rigorous and hands-on with code. See [Tutorials](./tutorials/README.md).
 
 ## Features
 
