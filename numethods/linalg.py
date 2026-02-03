@@ -100,12 +100,16 @@ class Matrix:
 
     def norm(self) -> float:
         """Matrix 1-norm: max column sum."""
+        if self.m == 0 or self.n == 0:
+            return 0.0
         return max(
             sum(abs(self.data[i][j]) for i in range(self.m)) for j in range(self.n)
         )
 
     def norm_inf(self) -> float:
         """Matrix infinity norm: max row sum."""
+        if self.m == 0 or self.n == 0:
+            return 0.0
         return max(sum(abs(v) for v in row) for row in self.data)
 
     def norm2(self, tol: float = 1e-10, max_iter: int = 5000) -> float:
@@ -113,8 +117,10 @@ class Matrix:
         # lazy import, avoids circular import
         from .eigen import PowerIteration
 
-        if not self.is_square():
-            raise NonSquareMatrixError("Spectral norm requires square matrix")
+        if self.m == 0 or self.n == 0:
+            return 0.0
+        if self.norm_fro() == 0.0:
+            return 0.0
         AtA = self.T @ self
         lam, _ = PowerIteration(AtA, tol=tol, max_iter=max_iter).solve()
         return math.sqrt(lam)

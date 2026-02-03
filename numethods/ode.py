@@ -159,7 +159,7 @@ class AdamsMoulton(ODESolver):
             y_guess = ys[-1] + h * f_prev  # predictor
             for _ in range(10):
                 F = ys[-1] + 0.5 * h * (f_prev + self.f(ts[-1] + h, y_guess)) - y_guess
-                dF = -1 - 0.5 * h * self._dfdy(ts[-1] + h, y_guess)
+                dF = -1 + 0.5 * h * self._dfdy(ts[-1] + h, y_guess)
                 y_new = y_guess - F / dF
                 if abs(y_new - y_guess) < 1e-12:
                     break
@@ -201,25 +201,51 @@ class PredictorCorrector(ODESolver):
 class RK45(ODESolver):
     """Runge–Kutta–Fehlberg (4,5) adaptive step."""
 
-    def __init__(self, f, t0, y0, h, tol=1e-6):
+    def __init__(
+        self,
+        f,
+        t0,
+        y0,
+        h,
+        rtol: float = 1e-6,
+        atol: float = 1e-9,
+        h_min: float = 1e-12,
+        min_factor: float = 0.2,
+        max_factor: float = 5.0,
+        safety: float = 0.84,
+    ):
         super().__init__(f, t0, y0, h)
-        self.tol = tol
+        self.rtol = rtol
+        self.atol = atol
+        self.h_min = h_min
+        self.min_factor = min_factor
+        self.max_factor = max_factor
+        self.safety = safety
 
     def solve(self, t_end):
         ts, ys = [self.t], [self.y]
         while self.t < t_end - 1e-14:
             h = min(self.h, t_end - self.t)
+            if h < self.h_min:
+                raise ValueError("Step size fell below minimum in RK45")
             y, err = self._rkf_step(self.t, self.y, h)
-            if err < self.tol:
+            scale = self.atol + self.rtol * max(abs(self.y), abs(y))
+            err_norm = err / (scale if scale > 0 else self.atol)
+            if err_norm <= 1.0:
                 self.t += h
                 self.y = y
                 ts.append(self.t)
                 ys.append(self.y)
-                # adapt step
-                s = 0.84 * (self.tol / (err + 1e-14)) ** 0.25
-                self.h = min(h * max(0.1, s), 5 * h)
+                if err_norm < 1e-14:
+                    s = self.max_factor
+                else:
+                    s = self.safety * (1.0 / err_norm) ** 0.25
+                s = min(self.max_factor, max(self.min_factor, s))
+                self.h = h * s
             else:
-                self.h = 0.5 * h
+                s = self.safety * (1.0 / err_norm) ** 0.25
+                s = max(self.min_factor, s)
+                self.h = h * s
         return ts, ys
 
     def _rkf_step(self, t, y, h):
@@ -250,5 +276,6 @@ class RK45(ODESolver):
             - 9 / 50 * k5
             + 2 / 55 * k6
         )
-        err = abs(y5 - y4)
+        scale = self.atol + self.rtol * max(abs(y), abs(y5))
+        err = abs(y5 - y4) / scale
         return y5, err
