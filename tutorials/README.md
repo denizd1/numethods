@@ -77,3 +77,13 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Composite rules.
    - Gauss-Legendre quadrature.
    - Application and example.
+
+9. [Tutorial 9: Curve Fitting](./tutorial9_curve_fitting.ipynb)
+
+   - Fitting vs interpolation.
+   - Linear least squares: The Normal Equations.
+   - Linear fit with custom basis functions.
+   - Exponential fit via linearization.
+   - Nonlinear least squares: Levenberg-Marquardt.
+   - Overfitting and underfitting.
+   - Application and example.
