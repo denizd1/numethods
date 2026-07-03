@@ -47,4 +47,13 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Error analysis.
    - Practical examples.
 
+6. [Tutorial 6: Eigenvalues and SVD](./tutorial6_eigenvalues_svd.ipynb)
+
+   - Eigenvalues and Eigenvectors.
+   - Power iteration.
+   - Inverse power iteration.
+   - Rayleigh Quotient iteration.
+   - QR Algorithm (Eigenvalues).
+   - SVD.
+   - Low rank approximations.
 ---
