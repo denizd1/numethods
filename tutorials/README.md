@@ -38,4 +38,13 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Trace outputs for iteration history.
    - Examples with `numethods.roots`.
 
+5. [Tutorial 5: Interpolation](./tutorial5_interpolation.ipynb)
+
+   - Interpolation problem.
+   - Lagrange interpolation.
+   - Newton's divided difference form.
+   - The Runge phenomenon.
+   - Error analysis.
+   - Practical examples.
+
 ---
