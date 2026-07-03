@@ -56,4 +56,14 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - QR Algorithm (Eigenvalues).
    - SVD.
    - Low rank approximations.
----
+
+7. [Tutorial 7: ODE Solvers](./tutorial7_ode_solvers.ipynb)
+
+   - Initial Value Problems (IVPs).
+   - Euler's method.
+   - High order Runge-Kutta methods.
+   - Convergence order analysis.
+   - Implicit methods: Backward Euler and Trapezoidal
+   - Multistep methods.
+   - Adaptive step-size control: RK45
+   - Application and example
