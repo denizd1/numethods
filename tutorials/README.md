@@ -67,3 +67,13 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Multistep methods.
    - Adaptive step-size control: RK45
    - Application and example
+
+8. [Tutorial 8: Numerical Differentiation and Integration](./tutorial8_quadrature_differentiation.ipynb)
+
+   - Finite difference.
+   - Truncation vs rounding error.
+   - Richardson extrapolation.
+   - Numerical integration.
+   - Composite rules.
+   - Gauss-Legendre quadrature.
+   - Application and example.
