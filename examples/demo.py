@@ -9,11 +9,30 @@ from numethods.solvers import (
     GaussJordan,
     Jacobi,
     GaussSeidel,
+    SOR,
     Cholesky,
 )
-from numethods.roots import Bisection, FixedPoint, Secant, NewtonRoot, print_trace
-from numethods.interpolation import NewtonInterpolation, LagrangeInterpolation
-from numethods.quadrature import Trapezoidal, Simpson, GaussLegendre
+from numethods.roots import (
+    Bisection,
+    RegulaFalsi,
+    Brent,
+    FixedPoint,
+    Secant,
+    NewtonRoot,
+    print_trace,
+)
+from numethods.interpolation import (
+    NewtonInterpolation,
+    LagrangeInterpolation,
+    CubicSpline,
+)
+from numethods.quadrature import (
+    Trapezoidal,
+    Simpson,
+    GaussLegendre,
+    AdaptiveSimpson,
+    Romberg,
+)
 from numethods.eigen import (
     PowerIteration,
     InversePowerIteration,
@@ -32,6 +51,7 @@ from numethods.ode import (
     AdamsMoulton,
     PredictorCorrector,
     RK45,
+    DormandPrince,
 )
 from numethods.differentiation import (
     ForwardDiff,
@@ -75,10 +95,16 @@ def demo_ode():
     run_solver(AdamsBashforth, "Adams-Bashforth (2-step)", order=2)
     run_solver(AdamsMoulton, "Adams-Moulton (2-step)")
     run_solver(PredictorCorrector, "Predictor-Corrector")
-    run_solver(RK45, "RK45 (adaptive)", tol=1e-6)
+    run_solver(RK45, "RK45 (adaptive)", rtol=1e-6)
+    run_solver(DormandPrince, "Dormand-Prince", rtol=1e-6)
 
     print("=" * 60)
     print("All solvers finished.")
+
+    # Systems: y0 is a list and f returns a list (harmonic oscillator)
+    osc = lambda t, y: [y[1], -y[0]]
+    ts, ys = RK4(osc, 0.0, [1.0, 0.0], 0.01).solve(math.pi)
+    print(f"Harmonic oscillator with RK4: y(pi) ≈ {ys[-1]} (exact [-1, 0])")
 
 
 def demo_differentiation():
@@ -138,6 +164,10 @@ def demo_eigen():
     solver_rqi.trace()
     print(f"Eigenvalue ≈ {mu:.6f}, eigenvector ≈ {x}\n")
 
+    print("\n=== QR algorithm (all eigenvalues) ===")
+    print("Eigenvalues:", QREigenvalues(A).eigenvalues())
+    print("Rotation matrix:", QREigenvalues(Matrix([[0, -1], [1, 0]])).eigenvalues())
+
     M = Matrix([[3, 1, 1], [-1, 3, 1], [1, 1, 3], [0, 2, 1]])
     U, S, V = SVD(M).solve()
     print("Singular values:", S)
@@ -147,11 +177,13 @@ def demo_linear_solvers():
     A = Matrix([[4, -1, 0], [-1, 4, -1], [0, -1, 3]])
     b = Vector([15, 10, 10])
 
-    print("LU:", LUDecomposition(A).solve(b))
+    lu = LUDecomposition(A)
+    print("LU:", lu.solve(b), " det(A) =", lu.det())
     print("Gauss-Jordan:", GaussJordan(A).solve(b))
     print("Cholesky:", Cholesky(A).solve(b))
     print("Jacobi:", Jacobi(A, b, tol=1e-12).solve())
     print("Gauss-Seidel:", GaussSeidel(A, b, tol=1e-12).solve())
+    print("SOR (omega=1.1):", SOR(A, b, omega=1.1, tol=1e-12).solve())
 
 
 def demo_roots():
@@ -179,6 +211,12 @@ def demo_roots():
     print("\nFixed-Point Iteration Trace (x^2 - 2):")
     print_trace(steps)
 
+    # Bracketing methods with faster convergence
+    print("\nRegula falsi (Illinois):", RegulaFalsi(f, 0, 2).solve())
+    steps = Brent(f, 0, 2).trace()
+    print("\nBrent's Method Trace (x^2 - 2):")
+    print_trace(steps)
+
 
 def demo_interpolation():
     x = [0, 1, 2, 3]
@@ -188,6 +226,8 @@ def demo_interpolation():
     t = 1.5
     print("Newton interpolation at", t, "=", newt.evaluate(t))
     print("Lagrange interpolation at", t, "=", lagr.evaluate(t))
+    spline = CubicSpline(x, y)
+    print("Natural cubic spline at", t, "=", spline.evaluate(t))
 
 
 def demo_quadrature():
@@ -199,6 +239,12 @@ def demo_quadrature():
     print("Trapezoidal integral of x^2 over [0,1]:", I1)
     print("Simpson integral of x^2 over [0,1]:", I2)
     print("Gauss-Legendre integral of x^2 over [0,1]:", I3)
+
+    g = math.exp
+    print("Gauss-Legendre (5 points, 4 panels) of e^x over [0,1]:",
+          GaussLegendre(g, 0, 1, n=5, panels=4).integrate(), "exact:", math.e - 1)
+    print("Adaptive Simpson of sqrt(x) over [0,1]:", AdaptiveSimpson(math.sqrt, 0, 1).integrate())
+    print("Romberg of e^x over [0,1]:", Romberg(g, 0, 1).integrate())
 
 
 def demo_fitting():
