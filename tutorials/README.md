@@ -9,15 +9,16 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Definitions of vectors and matrices.
    - Vector operations: addition, scalar multiplication, dot product, norms.
    - Matrix operations: addition, multiplication, transpose, inverse.
-   - Matrix and vector norms.
+   - Indexing, negation and scalar division.
+   - Matrix and vector norms (1, 2, ∞, Frobenius).
    - Examples with `numethods.linalg`.
 
 2. [Tutorial 2: Linear Systems of Equations](./tutorial2_linear_systems.ipynb)
 
    - Gaussian elimination and Gauss–Jordan.
-   - LU decomposition.
+   - LU decomposition with partial pivoting (PA = LU), determinant, step trace.
    - Cholesky decomposition.
-   - Iterative methods: Jacobi and Gauss-Seidel.
+   - Iterative methods: Jacobi, Gauss-Seidel and SOR.
    - Examples with `numethods.solvers`.
 
 3. [Tutorial 3: Orthogonalization and QR Factorization](./tutorial3_orthogonalization.ipynb)
@@ -25,6 +26,7 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Inner products and orthogonality.
    - Gram–Schmidt process (classical and modified).
    - Householder reflections.
+   - Loss of orthogonality: CGS vs MGS vs Householder.
    - QR decomposition and applications.
    - Examples with `numethods.orthogonal`.
 
@@ -34,6 +36,7 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Fixed-point iteration.
    - Newton’s method.
    - Secant method.
+   - Regula falsi (Illinois) and Brent's method.
    - Convergence analysis and error behavior.
    - Trace outputs for iteration history.
    - Examples with `numethods.roots`.
@@ -43,7 +46,8 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Interpolation problem.
    - Lagrange interpolation.
    - Newton's divided difference form.
-   - The Runge phenomenon.
+   - The Runge phenomenon and Chebyshev nodes.
+   - Cubic splines.
    - Error analysis.
    - Practical examples.
 
@@ -53,8 +57,8 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Power iteration.
    - Inverse power iteration.
    - Rayleigh Quotient iteration.
-   - QR Algorithm (Eigenvalues).
-   - SVD.
+   - QR Algorithm (Hessenberg reduction, Francis shifts, unshifted iteration for comparison).
+   - SVD (one-sided Jacobi).
    - Low rank approximations.
 
 7. [Tutorial 7: ODE Solvers](./tutorial7_ode_solvers.ipynb)
@@ -65,7 +69,8 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Convergence order analysis.
    - Implicit methods: Backward Euler and Trapezoidal
    - Multistep methods.
-   - Adaptive step-size control: RK45
+   - Adaptive step-size control: RK45 and Dormand–Prince
+   - Systems of ODEs
    - Application and example
 
 8. [Tutorial 8: Numerical Differentiation and Integration](./tutorial8_quadrature_differentiation.ipynb)
@@ -75,7 +80,8 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Richardson extrapolation.
    - Numerical integration.
    - Composite rules.
-   - Gauss-Legendre quadrature.
+   - Gauss-Legendre quadrature (n-point and composite).
+   - Romberg integration and adaptive Simpson.
    - Application and example.
 
 9. [Tutorial 9: Curve Fitting](./tutorial9_curve_fitting.ipynb)
@@ -85,5 +91,5 @@ This package comes with a set of Jupyter notebooks designed as a structured tuto
    - Linear fit with custom basis functions.
    - Exponential fit via linearization.
    - Nonlinear least squares: Levenberg-Marquardt.
-   - Overfitting and underfitting.
+   - Overfitting and underfitting (AIC / AICc).
    - Application and example.
