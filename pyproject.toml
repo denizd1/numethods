@@ -4,15 +4,26 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "numethods"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Some numerical methods implemented in Python"
 authors = [
     { name = "Deniz Donmez", email = "denzdonmez@gmail.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = { text = "MIT" }
+
+[project.optional-dependencies]
+plot = ["matplotlib"]
+test = ["pytest", "matplotlib"]
+tutorials = ["matplotlib", "jupyter"]
+
+[tool.setuptools.dynamic]
+version = { attr = "numethods.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["numethods"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
